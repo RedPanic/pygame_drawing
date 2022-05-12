@@ -1,6 +1,7 @@
 import pygame
 import random
 from Objects.Ball import Ball
+from Objects.AntiBlur import AntiBlur
 
 WIDTH = 2560
 HEIGHT = 1300
@@ -31,9 +32,10 @@ def main():
     clock = pygame.time.Clock()
     mode = 0
     ball_obj = Ball(64, 64, (random.randint(100, 255), random.randint(100, 255), random.randint(100, 255)), 3, SCREEN)
-    anti_blur_rect = ball_obj.rect
-    on_screen_objects = [ball_obj]
+    anti_blur = AntiBlur(ball_obj)
+    on_screen_objects = [ball_obj, anti_blur]
     SCREEN.blit(ball_obj.surf, ball_obj.rect)
+    SCREEN.fill((0,0,0))
 
     while running:
         for event in pygame.event.get():
@@ -60,11 +62,12 @@ def main():
                 if event.key == pygame.K_INSERT:
                     clear_screen(SCREEN)
 
-        SCREEN.fill((0, 0, 0))
+        # SCREEN.fill((0, 0, 0))
         move_ball(ball_obj, mode)
 
         # SCREEN.blit(SCREEN, SCREEN.get_rect())
-        pygame.display.update()
+        # pygame.display.update()
+        SCREEN.blit(anti_blur.surf, anti_blur.rect)
         SCREEN.blit(ball_obj.surf, ball_obj.rect)
         pygame.display.update(on_screen_objects)
         clock.tick(FPS)
