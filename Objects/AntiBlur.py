@@ -9,5 +9,5 @@ class AntiBlur(pygame.sprite.Sprite):
         self.rect = self.surf.get_rect()
 
     def move(self, obj):
-        
+        pass
 
