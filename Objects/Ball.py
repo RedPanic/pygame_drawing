@@ -14,6 +14,11 @@ class Ball(pygame.sprite.Sprite):
         self.x_vec = 1
         self.y_vec = 1
 
+    def reset(self):
+        self.rect.x = 0
+        self.rect.y = 0
+        self.lock()
+
     def draw_ball(self, color):
         pygame.draw.circle(self.surf, color, (self.surf.get_width() // 2, self.surf.get_height() // 2),
                            self.surf.get_width() // 2)
@@ -42,14 +47,16 @@ class Ball(pygame.sprite.Sprite):
 
         self.rect.move_ip(self.x_vec * self.velocity, self.y_vec * self.velocity)
 
-    def unlock_ball(self):
+    def unlock(self):
         self.locked = False
 
-    def lock_ball(self):
+    def lock(self):
         self.locked = True
 
     def increase_velocity(self, value):
         self.velocity += value
 
     def deacrease_velocity(self, value):
+        if self.velocity <= 0:
+            return
         self.velocity -= value

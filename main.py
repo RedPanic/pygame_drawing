@@ -1,5 +1,6 @@
 import pygame
 import random
+import time
 from Objects.Ball import Ball
 from Objects.AntiBlur import AntiBlur
 
@@ -15,29 +16,35 @@ def move_ball(ball, mode):
 
 
 def reset_ball(ball):
-    ball.rect.x = 0
-    ball.rect.y = 0
-    ball.lock_ball()
+    ball.reset()
 
 
 def clear_screen(screen):
     screen.fill((0, 0, 0))
+    pygame.display.update()
+
+
+def draw_objects(screen, objects: list):
+    screen.fill((0, 0, 0))
+
+    for item in objects:
+        screen.blit(item.surf, item.rect)
+
+    pygame.display.update()
 
 
 def main():
-    FPS = 60
+    fps = 60
     running = True
     # SCREEN = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
     SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
     clock = pygame.time.Clock()
     mode = 0
     ball_obj = Ball(64, 64, (random.randint(100, 255), random.randint(100, 255), random.randint(100, 255)), 3, SCREEN)
-    anti_blur = AntiBlur(ball_obj)
-    on_screen_objects = [ball_obj, anti_blur]
-    SCREEN.blit(ball_obj.surf, ball_obj.rect)
-    SCREEN.fill((0,0,0))
+    screen_objects = [ball_obj]
 
     while running:
+        clock.tick(fps)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -50,27 +57,20 @@ def main():
                     reset_ball(ball_obj)
                     clear_screen(SCREEN)
                 if event.key == pygame.K_SPACE:
-                    ball_obj.unlock_ball()
+                    ball_obj.unlock()
                 if event.key == pygame.K_LCTRL:
-                    ball_obj.lock_ball()
+                    ball_obj.lock()
                 if event.key == pygame.K_ESCAPE or event.key == pygame.K_F10:
                     running = False
                 if event.key == pygame.K_RIGHT:
-                    ball_obj.increase_velocity(20)
+                    ball_obj.increase_velocity(5)
                 if event.key == pygame.K_LEFT:
-                    ball_obj.deacrease_velocity(20)
+                    ball_obj.deacrease_velocity(5)
                 if event.key == pygame.K_INSERT:
                     clear_screen(SCREEN)
 
-        # SCREEN.fill((0, 0, 0))
         move_ball(ball_obj, mode)
-
-        # SCREEN.blit(SCREEN, SCREEN.get_rect())
-        # pygame.display.update()
-        SCREEN.blit(anti_blur.surf, anti_blur.rect)
-        SCREEN.blit(ball_obj.surf, ball_obj.rect)
-        pygame.display.update(on_screen_objects)
-        clock.tick(FPS)
+        draw_objects(SCREEN, screen_objects)
 
 
 if __name__ == '__main__':
