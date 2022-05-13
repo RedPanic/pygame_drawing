@@ -15,8 +15,9 @@ def move_ball(ball, mode):
         ball.bounce()
 
 
-def reset_ball(ball):
-    ball.reset()
+def reset_objects(objects):
+    for item in objects:
+        item.reset()
 
 
 def clear_screen(screen):
@@ -33,6 +34,23 @@ def draw_objects(screen, objects: list):
     pygame.display.update()
 
 
+def lock_objects(objects):
+    for item in objects:
+        item.lock()
+
+
+def unlock_objects(objects):
+    for item in objects:
+        item.unlock()
+
+
+def increase_velocity(obj, speed):
+    obj.increase_velocity(speed)
+
+def decrease_velocity(obj, speed):
+    obj.decrease_velocity(speed)
+
+
 def main():
     fps = 60
     running = True
@@ -40,8 +58,13 @@ def main():
     SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
     clock = pygame.time.Clock()
     mode = 0
-    ball_obj = Ball(64, 64, (random.randint(100, 255), random.randint(100, 255), random.randint(100, 255)), 3, SCREEN)
-    screen_objects = [ball_obj]
+    first_ball_obj = Ball(64, 64, (random.randint(100, 255), random.randint(100, 255), random.randint(100, 255)), 3,
+                          SCREEN)
+    second_ball_obj = Ball(64, 64, (random.randint(100, 255), random.randint(100, 255), random.randint(100, 255)), 3,
+                           SCREEN)
+    bottom = SCREEN.get_height() - second_ball_obj.rect.height
+    second_ball_obj.set_position(0, bottom)
+    screen_objects = [first_ball_obj, second_ball_obj]
 
     while running:
         clock.tick(fps)
@@ -54,22 +77,25 @@ def main():
                 if event.key == pygame.K_2:
                     mode = 2
                 if event.key == pygame.K_0:
-                    reset_ball(ball_obj)
+                    reset_objects(screen_objects)
                     clear_screen(SCREEN)
                 if event.key == pygame.K_SPACE:
-                    ball_obj.unlock()
+                    unlock_objects(screen_objects)
                 if event.key == pygame.K_LCTRL:
-                    ball_obj.lock()
+                    lock_objects(screen_objects)
                 if event.key == pygame.K_ESCAPE or event.key == pygame.K_F10:
                     running = False
                 if event.key == pygame.K_RIGHT:
-                    ball_obj.increase_velocity(5)
+                    increase_velocity(first_ball_obj, 5)
+                    increase_velocity(second_ball_obj, 3)
                 if event.key == pygame.K_LEFT:
-                    ball_obj.deacrease_velocity(5)
+                    decrease_velocity(first_ball_obj, 5)
+                    decrease_velocity(second_ball_obj, 3)
                 if event.key == pygame.K_INSERT:
                     clear_screen(SCREEN)
 
-        move_ball(ball_obj, mode)
+        move_ball(first_ball_obj, mode)
+        move_ball(second_ball_obj, mode)
         draw_objects(SCREEN, screen_objects)
 
 

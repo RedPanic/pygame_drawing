@@ -15,8 +15,7 @@ class Ball(pygame.sprite.Sprite):
         self.y_vec = 1
 
     def reset(self):
-        self.rect.x = 0
-        self.rect.y = 0
+        self.set_position(0, 0)
         self.lock()
 
     def draw_ball(self, color):
@@ -29,10 +28,16 @@ class Ball(pygame.sprite.Sprite):
         if self.rect.x >= self.screen.get_width():
             self.rect.x = 0
             self.rect.move_ip(0, self.velocity * 3)
-            if self.rect.y >= self.screen.get_height():
+            if self.rect.y + self.rect.height >= self.screen.get_height():
                 self.draw_ball((random.randint(100, 255), random.randint(100, 255), random.randint(100, 255)))
                 self.rect.y = 0
+                self.increase_size()
         self.rect.move_ip(self.velocity, 0)
+
+    def increase_size(self):
+        pygame.transform.scale(self.surf, (self.rect.width + 30, self.rect.height + 30))
+        self.rect.width += 10
+        self.rect.height += 10
 
     def bounce(self):
         if self.locked:
@@ -56,7 +61,11 @@ class Ball(pygame.sprite.Sprite):
     def increase_velocity(self, value):
         self.velocity += value
 
-    def deacrease_velocity(self, value):
+    def decrease_velocity(self, value):
         if self.velocity <= 0:
             return
         self.velocity -= value
+
+    def set_position(self, x, y):
+        self.rect.x = x
+        self.rect.y = y
